@@ -10,6 +10,11 @@ p_load(
   tokenizers
 )
 
+# Data -------------------------------------------------------------------------
+df_word_split_error <- read.csv(file ="./www/data/next_line_split_error.csv")
+
+word_split_error <- df_word_split_error %>% select(word) %>% pull
+
 # REGEX Strings ---------------------------------------------------------------
 
 ## Identify Hypo _ #:
@@ -99,17 +104,17 @@ extract_hypothesis <- function(input_text){
     if (is.na(num)){
       
       logical_hypothesis_3[i] = FALSE
-      tracker[i] <- -1
+      h_tracker[i] <- -1
       
-    } else if (num %in% tracker) {
+    } else if (num %in% h_tracker) {
       
       logical_hypothesis_3[i] = FALSE
-      tracker[i] <- -1
+      h_tracker[i] <- -1
       
     } else {
       
       logical_hypothesis_3[i] = TRUE
-      tracker[i] <- num
+      h_tracker[i] <- num
       
     }
   }
@@ -123,6 +128,21 @@ extract_hypothesis <- function(input_text){
   
   # Drop Empty Strings
   h_statements <- h_statements[h_statements != ""]
+  
+  # Fix Words Split over New Line
+  
+  for (i in seq_along(word_split_error)) {
+    # Select Incorrect and Fixed Words
+    word_split <- word_split_error[i]
+    word_fix <- str_replace_all(string = word_split, 
+                                pattern = " ",
+                                replacement = "")
+    
+    # Replace All Instances
+    h_statements <- h_statements %>% 
+      str_replace_all(pattern = word_split, 
+                      replacement = word_fix)
+  }
   
   # Convert to Sentence Case
   h_statements <- str_to_sentence(h_statements, locale = "en")

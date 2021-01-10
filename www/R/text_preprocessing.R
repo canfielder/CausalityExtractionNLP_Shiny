@@ -9,6 +9,14 @@ library(dplyr)
 library(stringr)
 library(tokenizers)
 
+# Data -------------------------------------------------------------------------
+# Patterns File
+patterns_col <- c("remove","comments")
+patterns_raw <- read_excel(path = "./../data/patterns.xlsx", 
+                           col_names = patterns_col)
+
+removal_patterns <- patterns_raw %>% pull(remove)
+
 # REGEX Strings ---------------------------------------------------------------
 ## Identify Letters
 regex_letters <- '[a-zA-Z]'
@@ -210,7 +218,7 @@ standardize_hypothesis <- Vectorize(standardize_hypothesis)
 #' pre-processing steps.
 #'
 
-process_text <- function(input_text, removal_patterns){
+process_text <- function(input_text) {
 
   # Vectorize -----------------------------------------------------------------
   ## Split Text into Character Vector
