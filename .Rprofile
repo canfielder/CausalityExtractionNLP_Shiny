@@ -1,8 +1,3 @@
-# Install Packages
-path_install <- "./www/R/load_and_install_packages.R"
-source(path_install)
-install_packages()
-
 # This file configures the virtualenv and Python paths differently depending on
 # the environment the app is running in (local vs remote server).
 

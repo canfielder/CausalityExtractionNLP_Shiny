@@ -1,8 +1,11 @@
 # Import, Setup, and Pre-processing --------------------------------------------
 
 # Import Packages
-path_import <- "./www/R/load_and_install_packages.R"
-source(path_import)
+path_install_import <- "./www/R/load_and_install_packages.R"
+source(path_install_import)
+
+install_packages()
+
 import_packages()
 
 # --- VIRTUALENV Setup ------------------------------------------------------- #
@@ -29,9 +32,10 @@ file_paths <- list.files(path = script_path, pattern = "*.R", full.names = TRUE)
 
 for (file in file_paths){
     # Skip Install Package
-    if (file == path_install) (next)
-    
-    source(file)
+    if (file != path_install_import){
+        source(file)   
+    }
+
 }
 
 # Import LIME Explainer
