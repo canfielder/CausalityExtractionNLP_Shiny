@@ -1,9 +1,9 @@
 # Import, Setup, and Pre-processing --------------------------------------------
 
 # Import Packages
-path_install <- "./www/R/install_packages.R"
-source("./www/R/install_packages.R")
-shiny_install_packages()
+path_import <- "./www/R/load_and_install_packages.R"
+source(path_import)
+import_packages()
 
 # --- VIRTUALENV Setup ------------------------------------------------------- #
 
