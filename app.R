@@ -9,7 +9,8 @@ shiny_install_packages()
 
 virtualenv_dir <- Sys.getenv('VIRTUALENV_NAME')
 python_path <- Sys.getenv('PYTHON_PATH')
-PYTHON_DEPENDENCIES <- c('numpy', 'fasttext', 'sklearn', 'joblib', 'tika')
+PYTHON_DEPENDENCIES <- c('numpy', 'fasttext', 'sklearn', 'joblib', 'tensorflow',
+                         'tika')
 
 # Create virtual env and install dependencies
 reticulate::virtualenv_create(envname = virtualenv_dir, python = python_path)
