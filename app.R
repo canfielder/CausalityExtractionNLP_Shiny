@@ -1,10 +1,8 @@
 # Import, Setup, and Pre-processing --------------------------------------------
 
 # Import Packages
-path_install_import <- "./www/R/load_and_install_packages.R"
-source(path_install_import)
-
-install_packages()
+path_import <- "./www/R/load_and_install_packages.R"
+source(path_import)
 
 import_packages()
 
@@ -32,7 +30,7 @@ file_paths <- list.files(path = script_path, pattern = "*.R", full.names = TRUE)
 
 for (file in file_paths){
     # Skip Install Package
-    if (file != path_install_import){
+    if (file != path_import){
         source(file)   
     }
 
