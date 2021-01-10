@@ -1,8 +1,14 @@
-packages_install <- c("DT",
+my_packages  <- c("DT",
                       "fastTextR",
                       "lime",
                       "readxl",
                       "reticulate",
                       "shiny")
 
-helpers.installPackages(packages_install)
+install_if_missing = function(p) {
+  if (p %in% rownames(installed.packages()) == FALSE) {
+    install.packages(p)
+  }
+}
+
+invisible(sapply(my_packages, install_if_missing))
