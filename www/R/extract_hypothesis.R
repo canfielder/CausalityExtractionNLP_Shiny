@@ -80,11 +80,52 @@ extract_hypothesis <- function(input_text){
   ## Drop Statements that Do Not Include "Hypo"
   h_statements <- h_statements[logical_hypothesis_2]
   
+  # Drop Duplicate Hypothesis Calls
+  ## Extract Hypothesis Number
+  h_number <- h_statements %>% 
+    str_extract("hypo (.*?):") %>% 
+    str_remove_all("hypo ") %>% 
+    str_remove_all(":") %>% 
+    as.integer()
+  
+  ## Identify Duplicate Hypothesis Numbers
+  logical_hypothesis_3 <- vector(mode = "logical", length = length(h_number))
+  h_tracker <- vector(mode = "integer", length = length(h_number))
+  
+  for (i in seq_along(h_number)) {
+    
+    num <- h_number[i]
+    
+    if (is.na(num)){
+      
+      logical_hypothesis_3[i] = FALSE
+      tracker[i] <- -1
+      
+    } else if (num %in% tracker) {
+      
+      logical_hypothesis_3[i] = FALSE
+      tracker[i] <- -1
+      
+    } else {
+      
+      logical_hypothesis_3[i] = TRUE
+      tracker[i] <- num
+      
+    }
+  }
+  
+  ## Drop Duplicates and Non-Hypotheses
+  h_statements <- h_statements[logical_hypothesis_3]
+  
+  
   # Drop ~Hypo #:~
   h_statements <- gsub(".*: ","",h_statements)
   
   # Drop Empty Strings
   h_statements <- h_statements[h_statements != ""]
+  
+  # Convert to Sentence Case
+  h_statements <- str_to_sentence(h_statements, locale = "en")
   
   # Create Dataframe with Hypothesis Number and Hypothesis
   df_hypothesis <- as.data.frame(h_statements,
