@@ -1,0 +1,12 @@
+name: CausalityExtractionNLP
+title: CausalityExtractionNLP
+username:
+account: evan-canfield
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3458901
+bundleId: 4079396
+url: https://evan-canfield.shinyapps.io/CausalityExtractionNLP/
+when: 1610306016.51059
+asMultiple: FALSE
+asStatic: FALSE

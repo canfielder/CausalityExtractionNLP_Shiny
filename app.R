@@ -1,14 +1,37 @@
-# Import and Pre-processing ---------------------------------------------------
+# Import, Setup, and Pre-processing --------------------------------------------
+
+# Import Packages
+path_install <- "./www/R/install_packages.R"
+source("./www/R/install_packages.R")
+shiny_install_packages()
+
+# --- VIRTUALENV Setup ------------------------------------------------------- #
+
+virtualenv_dir <- Sys.getenv('VIRTUALENV_NAME')
+python_path <- Sys.getenv('PYTHON_PATH')
+PYTHON_DEPENDENCIES <- c('numpy', 'fasttext', 'sklearn', 'joblib', 'tika')
+
+# Create virtual env and install dependencies
+reticulate::virtualenv_create(envname = virtualenv_dir, python = python_path)
+reticulate::virtualenv_install(virtualenv_dir, 
+                               packages = PYTHON_DEPENDENCIES, 
+                               ignore_installed=TRUE)
+
+# Assign Virtual Environment
+reticulate::use_virtualenv(virtualenv_dir, required = TRUE)
+
+# --- VIRTUALENV Setup ------------------------------------------------------- #
+
 ##  Execute All Scripts
 script_path <- "./www/R"
 file_paths <- list.files(path = script_path, pattern = "*.R", full.names = TRUE)
 
 for (file in file_paths){
+    # Skip Install Package
+    if (file == path_install) (next)
+    
     source(file)
 }
-
-# Install Packages
-shiny_install_packages()
 
 # Import LIME Explainer
 explainer <- import_lime_explainer()
@@ -19,11 +42,7 @@ patterns_raw <- read_excel(path = "./www/data/patterns.xlsx",
                            col_names = patterns_col)
 patterns <- patterns_raw %>% pull(remove)
 
-PYTHON_DEPENDENCIES = c('numpy', 'fasttext', 'sklearn', 'joblib',
-                        'tensorflow', 'tika')
-
-
-# UI --------------------------------------------------------------------------
+# UI ---------------------------------------------------------------------------
 ui <- fluidPage(
     
     titlePanel("Causal Knowledge Extraction"),
@@ -76,38 +95,9 @@ ui <- fluidPage(
 # Server ----------------------------------------------------------------------
 server <- function(input, output) {
     
-    # --- VIRTUALENV Setup -------------------------------------------------- #
-    
-    virtualenv_dir = Sys.getenv('VIRTUALENV_NAME')
-    python_path = Sys.getenv('PYTHON_PATH')
-    
-    # Create virtual env and install dependencies
-    # Determine Existing Virtual Environments
-    virtualenv_list <-  reticulate::virtualenv_list()
-    
-    # Create and Install Virtual Environment If One Doesn't Exist
-    if (!(virtualenv_dir %in% virtualenv_list)){
-    
-        reticulate::virtualenv_create(envname = virtualenv_dir, 
-                                      python = python_path)
-        reticulate::virtualenv_install(virtualenv_dir, 
-                                       packages = PYTHON_DEPENDENCIES, 
-                                       ignore_installed=TRUE)
-        
-    }
-    
-    # Assign Virtual Environment
-    reticulate::use_virtualenv(virtualenv_dir, required = TRUE)
-    
     # --- Python Modules --------------------------------------------------- #
-    # Numpy
-    np <- import("numpy")
-    
-    # Tika PDF Parser
-    parser <- import("tika.parser")
-    
-    # Tensorflow
-    tf <- import("tensorflow")
+    ## Tika PDF Parser
+    tika.parser <- import("tika.parser")
     
     # --- Reactive Values --------------------------------------------------- #
     
@@ -117,7 +107,8 @@ server <- function(input, output) {
         req(input$file1)
         
         # Convert PDF to Raw Text
-        pdf_raw <- tika_text(input$file1$datapath)
+        pdf_package <- tika.parser$from_file(input$file1$datapath)
+        pdf_raw <- pdf_package$content
         pdf_raw
     })
     
