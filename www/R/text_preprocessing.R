@@ -12,7 +12,7 @@ library(tokenizers)
 # Data -------------------------------------------------------------------------
 # Patterns File
 patterns_col <- c("remove","comments")
-patterns_raw <- read_excel(path = "./../data/patterns.xlsx", 
+patterns_raw <- read_excel(path = "./www/data/patterns.xlsx", 
                            col_names = patterns_col)
 
 removal_patterns <- patterns_raw %>% pull(remove)

@@ -2,7 +2,7 @@
 # the environment the app is running in (local vs remote server).
 
 # Edit this name if desired when starting a new app
-VIRTUALENV_NAME = '.CausalityExtractionNLP_app'
+VIRTUALENV_NAME = '.CausalityExtractionNLP'
 
 
 # ------------------------- Settings (Do not edit) -------------------------- #
@@ -27,8 +27,10 @@ if (Sys.info()[['user']] == 'shiny'){
   
   # Running locally
   options(shiny.port = 7450)
-  Sys.setenv(PYTHON_PATH = "/bin/python3")
-  Sys.setenv(VIRTUALENV_NAME = VIRTUALENV_NAME) 
+  # For Local Use Only
+  Sys.setenv(RETICULATE_PYTHON = "~/.virtualenvs/.CausalityExtractionNLP/Scripts/python.exe")
+  # Sys.setenv(PYTHON_PATH = "/bin/python3")
+  Sys.setenv(VIRTUALENV_NAME = VIRTUALENV_NAME)
   # RETICULATE_PYTHON is not required locally, 
   # RStudio infers it based on the ~/.virtualenvs path
 }

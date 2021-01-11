@@ -3,47 +3,30 @@
 # Import Packages
 path_import <- "./www/R/load_and_install_packages.R"
 source(path_import)
-
 import_packages()
 
-# --- VIRTUALENV Setup ------------------------------------------------------- #
+# Setup Reticulate
+path_reticulate <- "./www/R/reticulate_setup.R"
+source(path_reticulate)
+reticulate_setup()
 
-virtualenv_dir <- Sys.getenv('VIRTUALENV_NAME')
-python_path <- Sys.getenv('PYTHON_PATH')
-PYTHON_DEPENDENCIES <- c('numpy', 'fasttext', 'sklearn', 'joblib', 'tensorflow',
-                         'tika')
 
-# Create virtual env and install dependencies
-reticulate::virtualenv_create(envname = virtualenv_dir, python = python_path)
-reticulate::virtualenv_install(virtualenv_dir, 
-                               packages = PYTHON_DEPENDENCIES, 
-                               ignore_installed=TRUE)
-
-# Assign Virtual Environment
-reticulate::use_virtualenv(virtualenv_dir, required = TRUE)
-
-# --- VIRTUALENV Setup ------------------------------------------------------- #
-
-##  Execute All Scripts
+#  Execute Remaining Scripts
+executed_scripts <- c(path_import, path_reticulate)
 script_path <- "./www/R"
 file_paths <- list.files(path = script_path, pattern = "*.R", full.names = TRUE)
 
 for (file in file_paths){
     # Skip Install Package
-    if (file != path_import){
+    if (!(file %in% executed_scripts)) {
+        
         source(file)   
+        
     }
-
 }
 
 # Import LIME Explainer
 explainer <- import_lime_explainer()
-
-# Import Patterns File
-patterns_col <- c("remove","comments")
-patterns_raw <- read_excel(path = "./www/data/patterns.xlsx",
-                           col_names = patterns_col)
-patterns <- patterns_raw %>% pull(remove)
 
 # UI ---------------------------------------------------------------------------
 ui <- fluidPage(
@@ -95,14 +78,14 @@ ui <- fluidPage(
 )
 
 # Define server logic required to draw a histogram
-# Server ----------------------------------------------------------------------
+# Server -----------------------------------------------------------------------
 server <- function(input, output) {
     
-    # --- Python Modules --------------------------------------------------- #
+    # --- Python Modules ----------------------------------------------------- #
     ## Tika PDF Parser
     tika.parser <- import("tika.parser")
     
-    # --- Reactive Values --------------------------------------------------- #
+    # --- Reactive Values ---------------------------------------------------- #
     
     # Convert Uploaded PDF to Text
     pdf_txt_reactive <- reactive({
@@ -157,8 +140,8 @@ server <- function(input, output) {
         pdf_txt_raw <- pdf_txt_reactive()
         
         # Process Text
-        pdf_txt_pr <- process_text(input_text = pdf_txt_raw,
-                                   removal_patterns = patterns)
+        pdf_txt_pr <- process_text(input_text = pdf_txt_raw)
+        
         # Extract Hypotheses
         hypo_xtr <- extract_hypothesis(pdf_txt_pr)
         hypo_xtr
