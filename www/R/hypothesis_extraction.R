@@ -11,7 +11,8 @@ p_load(
 )
 
 # Data -------------------------------------------------------------------------
-df_word_split_error <- read.csv(file ="./www/data/next_line_split_error.csv")
+df_word_split_error <- read.csv(file ="./www/data/next_line_split_error.csv", 
+                                stringsAsFactors = FALSE)
 
 word_split_error <- df_word_split_error %>% select(word) %>% pull
 

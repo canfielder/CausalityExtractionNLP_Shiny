@@ -52,17 +52,21 @@ ui <- fluidPage(
                     textOutput("file1_path"),
                     uiOutput(outputId = "pdf_view")
                 ),
-                tabPanel(
-                    "Text - Raw",
-                    textOutput("text_raw")
-                ),
-                tabPanel(
-                    "Text - Processed",
-                    textOutput("text_pr")
-                ),
+                # tabPanel(
+                #     "Text - Raw",
+                #     textOutput("text_raw")
+                # ),
+                # tabPanel(
+                #     "Text - Processed",
+                #     textOutput("text_pr")
+                # ),
                 tabPanel(
                     "Hypothesis Table",
                     DTOutput("hypothesis")
+                ),
+                tabPanel(
+                    "Entity Extraction",
+                    DTOutput("entity")
                 ),
                 tabPanel(
                     "LIME Explanation - Table",
@@ -147,6 +151,26 @@ server <- function(input, output) {
         hypo_xtr
     })
     
+    # Extract Entities From Hypothesis
+    entity_reactive <- reactive({
+        # Wait Until Text is Processed
+        req(hypotheses_reactive)
+        
+        # Convert PDF to Raw Text
+        hypotheses <- hypotheses_reactive()
+        
+        #Convert to Vector
+        vec_hypotheses <- hypotheses %>% 
+            select(hypothesis) %>% 
+            pull()
+        
+        # Extract Entities
+        df_entity <- entity_extraction_mult(vec_hypotheses)
+        
+        df_entity
+
+    })
+    
     # --- Outputs to UI ----------------------------------------------------- #
     
     output$pdf_view <- renderUI({
@@ -160,14 +184,17 @@ server <- function(input, output) {
     
     output$text_pr <- renderText({
         pdf_txt_raw <- pdf_txt_reactive()
-        pdf_txt_pr <- process_text(input_text = pdf_txt_raw,
-                                   removal_patterns = patterns)
+        pdf_txt_pr <- process_text(input_text = pdf_txt_raw)
         
         pdf_txt_pr
     })
     
     output$hypothesis <- DT::renderDT({
         hypotheses_reactive()
+    })
+    
+    output$entity <- DT::renderDT({
+        entity_reactive()
     })
     
     output$lime_explanation_table <- DT::renderDT({

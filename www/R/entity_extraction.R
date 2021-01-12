@@ -264,7 +264,7 @@ index_to_entity <- function(hypothesis, entity_index_input) {
 #'     List containing the extracted entity text (list)
 #
 
-wrapper_entity_extraction_indv <- function(hypothesis) {
+entity_extraction_indv <- function(hypothesis) {
   # Generate Entity Class Predictions
   pred_classes <- gen_entity_class(hypothesis)
 
@@ -303,7 +303,7 @@ wrapper_entity_extraction_indv <- function(hypothesis) {
 #'     List containing the extracted entity text of all hypotheses(dataframe)
 #
 
-wrapper_entity_extraction_mult <- function(lst_hypothesis){
+entity_extraction_mult <- function(lst_hypothesis){
   # Initialize Output List
   num_hypothesis <- length(lst_hypothesis)
   
@@ -322,7 +322,24 @@ wrapper_entity_extraction_mult <- function(lst_hypothesis){
   # Convert List of Lists to Dataframe
   df_entity_text_output <- as.data.frame(
     do.call(rbind, lapply(lst_entity_text_output, as.vector))) %>% 
-    rename(node_1 = V1, node_2 = V2)
+    rename(Cause = V1, Effect = V2)
+  
+  # Replace Missing Entity Tag
+  missing_entity_tag <- "<Entity Not Detected>"
+  replacement_tag <- ""
+  
+  df_entity_text_output <- df_entity_text_output %>% 
+    mutate(
+      Cause = str_replace_all(Cause, missing_entity_tag, replacement_tag),
+      Effect = str_replace_all(Effect, missing_entity_tag, replacement_tag)
+    ) %>% 
+    mutate(
+      Effect = str_remove_all(Effect, "\\.")
+    ) %>% 
+    mutate(
+      Cause = str_to_sentence(Cause, locale = "en"),
+      Effect = str_to_sentence(Effect, locale = "en")
+    )
   
   return(df_entity_text_output)
 }

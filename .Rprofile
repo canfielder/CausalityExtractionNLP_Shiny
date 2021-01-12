@@ -12,7 +12,8 @@ if (Sys.info()[['user']] == 'shiny'){
   # Running on shinyapps.io
   Sys.setenv(PYTHON_PATH = 'python3')
   Sys.setenv(VIRTUALENV_NAME = VIRTUALENV_NAME) # Installs into default dir
-  path_python = paste0('/home/shiny/.virtualenvs/',VIRTUALENV_NAME, 
+  path_python = paste0('/home/shiny/.virtualenvs/',
+                       VIRTUALENV_NAME, 
                        '/bin/python')
   Sys.setenv(RETICULATE_PYTHON = path_python)
   
@@ -28,8 +29,7 @@ if (Sys.info()[['user']] == 'shiny'){
   # Running locally
   options(shiny.port = 7450)
   # For Local Use Only
-  Sys.setenv(RETICULATE_PYTHON = "~/.virtualenvs/.CausalityExtractionNLP/Scripts/python.exe")
-  # Sys.setenv(PYTHON_PATH = "/bin/python3")
+  Sys.setenv(PYTHON_PATH = "/bin/python3")
   Sys.setenv(VIRTUALENV_NAME = VIRTUALENV_NAME)
   # RETICULATE_PYTHON is not required locally, 
   # RStudio infers it based on the ~/.virtualenvs path
